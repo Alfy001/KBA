@@ -5,8 +5,9 @@ contract HospitalRecords {
     address admin;
 
     // Events
-    event PatientRegistered(address indexed patient, bool isRegistered);
-    event RecordUpdated(address indexed patient, string ipfsHash, address updatedBy);
+    event PatientRegistered(address indexed patient, bool isRegistered, string initialCID);
+    event FirstPageUpdated(address indexed patient, string ipfsHash, address updatedBy);
+    event NewPageAdded(address indexed patient, string ipfsHash, address addedBy);
 
     // Constructor
     constructor() {
@@ -28,52 +29,60 @@ contract HospitalRecords {
     // Mappings
     mapping(address => bool) public registeredPatients;
     mapping(address => bool) public registeredHospitals;
-    mapping(address => string) public patientRecords;  // IPFS CIDs for each patient's medical record
-    mapping(address => bool) public admins;
+    mapping(address => string) firstPageRecord; // IPFS CID for the first page of patient's record
+    mapping(address => address)  firstPageHospital; // Track which hospital updated the first page
+    mapping(address => string[])  patientAdditionalPages; // IPFS CIDs for additional pages
+    mapping(address => address[]) pageHospitals; // Track which hospital added each additional page
+    mapping(address => bool) admins;
 
-    // New mapping to track hospitals that updated each patient's record
-    mapping(address => address[]) public patientEditHistory;  // Track which hospitals updated a patient's record
-
-    // Admins can add new hospitals
+    // Register a new hospital (only by admin)
     function registerHospital(address _hospital) public onlyAdmin {
         registeredHospitals[_hospital] = true;
     }
 
-    // Hospitals register patients with a default first page
-    function registerPatient(address _patient, string memory _initialCID) public onlyRegisteredHospital {
-    require(!registeredPatients[_patient], "Patient is already registered");
-    registeredPatients[_patient] = true;
-    patientRecords[_patient] = _initialCID; // Store IPFS CID for the default first page
-    emit PatientRegistered(_patient, true);
-    } 
+    // Admin registers a new patient with a default first page
+    function registerPatient(address _patient, string memory _initialCID) public onlyAdmin {
+        require(!registeredPatients[_patient], "Patient is already registered");
 
+        registeredPatients[_patient] = true;
+        firstPageRecord[_patient] = _initialCID; // Automatically set first page with default CID
+        firstPageHospital[_patient] = address(0); // No hospital has edited yet
 
-    // Function to update the first page or add a new page
-    function updatePatientRecord(address _patient, string memory _newCID, bool isFirstPage) public onlyRegisteredHospital {
+        emit PatientRegistered(_patient, true, _initialCID);
+    }
+
+    // Function to update the first page (only hospitals can edit, but not add the first page)
+    function updateFirstPage(address _patient, string memory _newCID) public onlyRegisteredHospital {
         require(registeredPatients[_patient], "Patient is not registered");
 
-        // Hospitals can modify the first page or append a new page
-        if (isFirstPage) {
-            // Edit the first page (allow modification)
-            patientRecords[_patient] = _newCID;  // Update with the new CID (for the first page)
-        } else {
-            // Append a new page to the record (add new CID)
-            patientRecords[_patient] = _newCID;  // Append new page (new CID of the updated PDF)
-        }
+        firstPageRecord[_patient] = _newCID; // Update the first page IPFS CID
+        firstPageHospital[_patient] = msg.sender; // Track which hospital edited the first page
 
-        // Add the hospital to the patient's edit history
-        patientEditHistory[_patient].push(msg.sender);  // Log the hospital that made the update
-
-        emit RecordUpdated(_patient, _newCID, msg.sender);  // Include hospital address in the event
+        emit FirstPageUpdated(_patient, _newCID, msg.sender);
     }
 
-    // Function for admin to retrieve a patient's record update history (list of hospitals)
-    function getPatientEditHistory(address _patient) public view onlyAdmin returns (address[] memory) {
-        return patientEditHistory[_patient];
+    // Add a new page to the patient's record (any registered hospital can add a new page)
+    function addNewPage(address _patient, string memory _newCID) public onlyRegisteredHospital {
+        require(registeredPatients[_patient], "Patient is not registered");
+
+        patientAdditionalPages[_patient].push(_newCID); // Append new page (new IPFS CID)
+        pageHospitals[_patient].push(msg.sender); // Track which hospital added this page
+
+        emit NewPageAdded(_patient, _newCID, msg.sender);
     }
 
-    // Retrieve the current medical record (IPFS CID)
-    function getPatientRecord(address _patient) public view returns (string memory) {
-        return patientRecords[_patient];
+    // Retrieve the first page (IPFS CID)
+    function getFirstPage(address _patient) public view returns (string memory) {
+        return firstPageRecord[_patient];
+    }
+
+    // Retrieve all additional pages (IPFS CIDs)
+    function getAdditionalPages(address _patient) public view returns (string[] memory) {
+        return patientAdditionalPages[_patient];
+    }
+
+    // Retrieve which hospitals added the additional pages
+    function getPageHospitals(address _patient) public view onlyAdmin returns (address[] memory) {
+        return pageHospitals[_patient];
     }
 }
