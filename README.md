@@ -31,6 +31,8 @@ The HospitalRecords smart contract is designed to manage patient records on the 
 
 ## Prerequisites
 - Solidity ^0.8.26
+- Flutter
+- Django- not yet decided
 
 ## Setup Instructions
 1. Clone the repository:
