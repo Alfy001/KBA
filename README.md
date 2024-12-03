@@ -1,23 +1,27 @@
-MedAmex Blockchain-Based Medical Data System
-Project Overview
+# **MedAmex Blockchain-Based Medical Data System**
+
+## **Project Overview**
 MedAmex is a secure blockchain-based system designed to store and retrieve critical medical data. The project uses IPFS for decentralized storage and Ethereum for smart contract deployment. This README provides step-by-step instructions for executing the project.
 
-Prerequisites
-Node.js (v14 or higher)
-Hardhat (installed globally)
-Alchemy or Infura API key (for Holesky or Sepolia network)
-Supported Ethereum wallet (e.g., Metamask)
-Step 1: Clone the Repository
-Clone the project repository to your local machine:
+---
 
-bash
-Copy code
-git clone <repository_url>  
+## **Prerequisites**
+- Node.js (v14 or higher)
+- Hardhat (installed globally)
+- Alchemy or Infura API key (for Holesky or Sepolia network)
+- Supported Ethereum wallet (e.g., Metamask)
+
+---
+
+## **Step 1: Clone the Repository**
+Clone the project repository to your local machine:
+```bash
+git clone <repository_url>
 Navigate to the project directory:
 
 bash
 Copy code
-cd MedAmex  
+cd MedAmex
 Step 2: Configure Environment Variables
 Update the .env file in the project directory.
 Replace PRIVATE_KEY with your Ethereum private key.
@@ -26,45 +30,45 @@ Example .env file:
 
 plaintext
 Copy code
-PRIVATE_KEY=your-private-key  
-ALCHEMY_URL=https://sepolia.infura.io/v3/your-project-id  
+PRIVATE_KEY=your-private-key
+ALCHEMY_URL=https://sepolia.infura.io/v3/your-project-id
 Step 3: Deploy the Smart Contract
 Navigate to the smart contract directory:
 bash
 Copy code
-cd smart-contract  
+cd smart-contract
 Clean the Hardhat build:
 bash
 Copy code
-npx hardhat clean  
+npx hardhat clean
 Clean Ignition Modules Deployments:
 Delete previous deployments from ignition/modules/deployments.
 
 Deploy the contract:
 bash
 Copy code
-npx hardhat run ignition/modules/medamex.js --network <holesky/sepolia>  
+npx hardhat run ignition/modules/medamex.js --network <holesky/sepolia>
 Post-Deployment Configuration:
 Copy the deployment address and ABI from the output.
 Update the following files with the deployment details:
 Backend .env file:
 plaintext
 Copy code
-PRIVATE_KEY=your-private-key  
-CONTRACT_ADDRESS=deployment-address  
-ADMIN_ADDRESS=same-as-contract-address  
+PRIVATE_KEY=your-private-key
+CONTRACT_ADDRESS=deployment-address
+ADMIN_ADDRESS=same-as-contract-address
 Frontend: Update src/utils with the deployment address and ABI.
 Step 4: Run the Backend Server
 Navigate to the backend directory:
 
 bash
 Copy code
-cd backend  
+cd backend
 Start the backend server:
 
 bash
 Copy code
-node backend.js  
+node backend.js
 The server should now be running.
 
 Step 5: Run the Frontend
@@ -72,12 +76,12 @@ Navigate to the frontend directory:
 
 bash
 Copy code
-cd frontend/medamex  
+cd frontend/medamex
 Start the frontend development server:
 
 bash
 Copy code
-npm run dev  
+npm run dev
 The homepage will be accessible at http://localhost:3000 (or as displayed in the terminal).
 
 Project Workflow
