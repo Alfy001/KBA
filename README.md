@@ -21,8 +21,10 @@ Navigate to the project directory:
 
 
 cd MedAmex
+```
+##Step 2: Configure Environment Variables**
 
-Step 2: Configure Environment Variables
+```
 Update the .env file in the project directory.
 Replace PRIVATE_KEY with your Ethereum private key.
 Replace ALCHEMY_URL or INFURA_URL with the corresponding Holesky or Sepolia URL.
@@ -31,10 +33,11 @@ Example .env file:
 
 PRIVATE_KEY=your-private-key
 ALCHEMY_URL=https://sepolia.infura.io/v3/your-project-id
+```
 
-Step 3: Deploy the Smart Contract
+##Step 3: Deploy the Smart Contract**
 Navigate to the smart contract directory:
-
+```
 cd smart-contract
 
 Clean the Hardhat build:
@@ -59,10 +62,10 @@ CONTRACT_ADDRESS=deployment-address
 ADMIN_ADDRESS=same-as-contract-address
 
 Frontend: Update src/utils with the deployment address and ABI
-
-Step 4: Run the Backend Server
+```
+##Step 4: Run the Backend Server**
 Navigate to the backend directory:
-
+```
 
 cd backend
 Start the backend server:
@@ -70,11 +73,11 @@ Start the backend server:
 
 node backend.js
 The server should now be running.
-
-Step 5: Run the Frontend
+```
+##Step 5: Run the Frontend**
 Navigate to the frontend directory:
 
-
+```
 cd frontend/medamex
 Start the frontend development server:
 
@@ -86,6 +89,6 @@ Project Workflow
 Admin registers hospitals using the configured contract.
 Hospitals can register, update, and fetch patient data securely.
 Logs are maintained for all hospital activities.
-
+```
 Congratulations!
 The MedAmex system is now up and running. Thank you for contributing to this innovative project to revolutionize healthcare data management.
